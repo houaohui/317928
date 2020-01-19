@@ -1,0 +1,18 @@
+#include <reg52.h>
+void delay(unsigned int i)
+{
+	while(i--);
+}
+void main()
+{
+	unsigned char n;
+	while(1)
+	{
+		for(n=0;n<8;n++)
+		{
+			P0=~(0x01<<n);
+			delay(40000);
+		}
+	}
+
+}
