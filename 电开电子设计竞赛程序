@@ -1,0 +1,197 @@
+#include<reg52.h>
+
+	sbit pwm=P1^6;
+	sbit pwm1=P1^7;
+	sbit s=P1^5;
+	sbit s1=P1^4;
+	sbit k3=P1^3;
+	unsigned char a,x,y,n,m,i=0;
+	unsigned char send[]="Received "; //ÉèÖÃ·¢ËÍµÄ×Ö·û´®
+	void delay(unsigned int t)		//ÑÓÊ±×Ô¶¨Òåº¯Êý
+{	while(t--);
+} 
+ 
+	void UsartConfiguration();		 //ÉùÃ÷´®¿ÚÅäÖÃº¯Êý
+
+	void Com_Int(void) interrupt 4		  //´®¿ÚÖÐ¶Ïº¯Êý
+{	unsigned char receive_data;
+	unsigned char k;	
+	EA = 0;
+
+  if(RI == 1) 	  //¼ì²â´®¿Ú±êÖ¾Î»
+	{ 
+		RI = 0;	  //´®¿Ú±êÖ¾Î»ÖÃÁã
+		receive_data = SBUF;	//Ìá³ö½ÓÊÜµÄ×Ö·û´®
+
+		if(receive_data=='1')	 //ÅÐ¶Ï²¢Ö´ÐÐ
+		{
+		s=0;
+		}
+		if(receive_data=='2')	 
+		{
+		s1=0;
+		}
+		if(receive_data=='3')	 
+		{
+		k3=0;i=5;
+		}
+	}
+		for(k=0;k<9;k++)		 //°Ñ9×Ö½Ú×Ö·û´®Ñ­»··¢ËÍ»ØÈ¥×öÎªÌáÐÑ
+		{		
+			SBUF =send[k];  
+			while(!TI);		     //ÅÐ¶Ï·¢ËÍ±êÖ¾Î»ÊÇ·ñÖÃÒ»
+			TI=0;			      //Ïû³ý±êÖ¾Î»
+			delay(100);
+		}
+		EA = 1;
+}
+
+
+	void disp1()
+{	pwm=1;delay(10);
+	pwm=0;delay(10);
+	P2=0xfb;
+}
+	void disp2()
+{	pwm=1;delay(400);
+	pwm=0;delay(100);
+	P2=0xfd;
+}
+	void disp3()
+{	pwm=1;
+	P2=0xfe;
+}
+	void disp0()
+{	pwm=0;
+	P2=0xf7;
+}
+	void dispa()
+{	pwm1=1;delay(10);
+	pwm1=0;delay(10);
+	P2=0xef;
+}
+	void dispb()
+{	pwm1=1;delay(400);
+	pwm1=0;delay(100);
+	P2=0xdf;
+}	
+	void dispc()
+{	pwm1=1;
+	P2=0xbf;
+}
+	void mode0()
+{	P2=0xff;i=5;
+}
+	void mode1()
+{
+	P2=P2<<1;
+	delay(5000);
+}
+	void mode2()
+{
+	P2=~(0x01<<m) ;
+	delay(6000);m++;
+	if(m>7){a=3;n=0;}
+if(k3==0){delay(7000);if(k3==0){k3=1;a=4;P2=0xff;}}
+}
+	void mode3()
+{
+	P2=~(0x80>>n);
+	delay(6000);n++;
+	if(n>7){a=2;m=0;}
+	if(k3==0){delay(7000);if(k3==0){k3=1;a=4;P2=0xff;}}
+}
+	void mode4()
+{	if(P2==0x00)P2=0xff;
+	P2=P2<<1;
+	delay(6000);
+	y++;
+	if(y>7){x=0;a=5;}
+	if(k3==0){delay(7000);if(k3==0){k3=1;a=0;P2=0xff;}}
+}
+	void mode5()
+{	if(P2==0x00)P2=0xff;
+	P2=P2>>1;
+	delay(6000);
+	x++;
+	if(x>7){y=0;a=4;}
+	if(k3==0){delay(7000);if(k3==0){k3=1;a=0;P2=0xff;}}
+}
+
+
+	void main()
+{
+UsartConfiguration();//³õÊ¼»¯´®¿Ú
+
+a=6;
+pwm=0;
+while(1)
+{
+	if(s==0)		//ÅÐ¶Ï°´¼üÊÇ·ñ°´ÏÂ²¢Ö´ÐÐ²Ù×÷
+{
+ 	delay(7000);
+ 	if(s==0)
+{
+ 	s=1;
+ 	i++;a=6;
+}
+}
+	if(s1==0)
+{
+	delay(7000);
+	if(s1==0)
+{
+	s1=1;
+	i--;a=6;
+}
+}
+	if(k3==0)
+{	
+	delay(5000);
+	if(k3==0)
+{
+	k3=1;
+	a++;
+	i=5;pwm1=0;pwm=0;
+	if(a>5)a=0;
+}
+}
+	if(i<0)pwm=0;
+	else pwm1=0;
+	if(i==4||i==-4||i==6)i=0;
+	switch(i)					   //µ²Î»Ä£Ê½Ñ¡Ôñ
+{
+	case 3:disp3();break;
+	case -3:dispc();break;
+	case 2:disp2();break;
+	case -2:dispb();break;
+	case 1:disp1();break;
+	case -1:dispa();break;
+	case 0:disp0();break;
+	case 5:break;
+	default:;
+}
+switch(a)					  //ledÄ£Ê½Ñ¡Ôñ
+{	case 6:break;
+	case 1:mode1();break;
+	case 2:mode2();break;
+	case 3:mode3();break;
+	case 4:mode4();break;
+	case 5:mode5();break;
+	case 0:mode0();break;
+	default:;
+}
+}
+}	
+
+void UsartConfiguration()	//×Ô¶¨Òå´®¿Ú³õÊ¼»¯º¯Êý
+{	
+	SCON=0X50;			//ÉèÖÃÎª¹¤×÷·½Ê½1,8Î»Êý¾Ý
+	TMOD=0X20;			//ÉèÖÃ¶¨Ê±Æ÷¹¤×÷·½Ê½2
+	PCON=0X00;			//²¨ÌØÂÊ²»¼Ó±¶
+	TH1=0XFd;		    //¼ÆÊýÆ÷ÉèÖÃ
+	TL1=0XFd;
+	TR1=1;					//´ò¿ª¼ÆÊýÆ÷
+	ES = 1;         //¿ª´®¿ÚÖÐ¶Ï
+	EA = 1;         //¿ª×ÜÖÐ¶Ï
+}
