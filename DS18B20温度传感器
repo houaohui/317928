@@ -1,0 +1,105 @@
+#include <stc12c5a60s2.h>
+sbit DS = P3^5; //1_wire
+sbit enled=P1^1;
+unsigned char code ledchar[]=
+{0xc0,0xf9,0xa4,0xb0,0x99,0x92,0x82,0xf8,0x80,0x90};
+//½øÈëº¯Êý0.98us,¼õÒ»´Î0.49us
+void delay(unsigned int us)
+{
+	while(us--);
+}
+
+//³õÊ¼»¯³ÌÐò
+bit ds_init()
+{
+	bit i;
+	DS=1;
+	delay(1);
+	DS=0;
+	delay(998);//ÑÓÊ±480usÒÔÉÏ£¬ds18b20½«±»¸´Î»
+	DS=1;
+	delay(59);//15~60us,µÈ´ý
+	i=DS;
+	delay(300);//²ÉÑùÖ®ºóµÈ´ý60~240us
+	DS=1;
+	delay(1);
+	return (i);
+}
+
+//Ð´Ò»¸ö×Ö½Ú
+void write_byte(unsigned char dat)
+{
+	unsigned char i;
+	for(i=0;i<8;i++)
+	{
+		DS=0;
+		delay(1);
+		DS=dat&0x01;
+		delay(150);//ÑÓÊ±60usÒÔÉÏ
+		DS=1; //ÊÍ·Å×ÜÏß×¼±¸ÏÂ´ÎÊý¾ÝÐ´Èë
+		delay(1);//1us
+		dat >>= 1;
+	}
+}
+//¶ÁÒ»¸ö×Ö½Ú
+unsigned char read_byte()
+{
+	unsigned char i,j,dat;
+	for(i=0;i<8;i++)
+	{
+		DS=0;//²úÉú¶ÁÊ±Ðò
+		delay(1);//1us
+		DS=1;//ÊÍ·ÅÖÐÏß²ÉÑù
+		delay(1);//1us
+		j=DS;
+		delay(150);//60usÒÔÉÏ
+		DS=1;
+		delay(1);//1us
+		dat=(j<<7)|(dat>>1);
+	}
+	return(dat);
+}
+
+void main()
+{
+	unsigned int i;
+	unsigned char L,M,a,b,c;
+	enled=0;
+	ds_init();
+	write_byte(0xcc);//·¢ËÍÌøÔ½ROMÖ¸Áî
+	write_byte(0x4e);//Ð´ÔÝ´æÆ÷Ö¸Áî
+	write_byte(0x7f);//±¨¾¯ÉÏÏÞÖµ
+	write_byte(0x00);//±¨¾¯ÏÂÏÞÖµ
+	write_byte(0x7f);//ÅäÖÃ¹¤×÷ÔÚ12Î»Ä£Ê½ÏÂ
+	ds_init();
+	write_byte(0xcc);//·¢ËÍÌøÔ½ROMÖ¸Áî
+	write_byte(0x48);//·¢ËÍ¿¼ÅàÖ¸Áî£¬ÏÂ´ÎÉÏµçºóDS18B20»á°´´ËÅäÖÃ¹¤×÷£¬ÒÔºó²»ÓÃÅäÖÃ
+	while(1)
+	{
+		ds_init();
+		write_byte(0xcc);//·¢ËÍÌøÔ½ROMÖ¸Áî
+		write_byte(0x44);//·¢ËÍÎÂ¶È×ª»»Ö¸Áî
+		delay(1528);
+		ds_init();
+		write_byte(0xcc);//·¢ËÍÌøÔ½ROMÖ¸Áî
+		write_byte(0xbe);//¶ÁÈ¡ds18b20ÔÝ´æÖµ
+		L=read_byte();
+		M=read_byte();
+		i=M;
+		i<<=8;
+		i|=L;
+		if(M>=0x08) //ÅÐ¶ÏÊÇ·ñÎªÕýÊý
+		{
+			i=~i+1; //»¹Ô­¸ºÊýÈ¡·´¼ÓÒ»
+		}
+		i=i*0.0625*10+0.5;
+		a=ledchar[i%10];
+		b=ledchar[i/10%10];
+		c=ledchar[i/100%10];
+		
+		P20=0;P21=0;P22=1;P0=a;delay(100);P0=0xff;
+		P20=1;P21=1;P22=0;P0=b+0x80;delay(100);P0=0xff;
+		P20=0;P21=1;P22=0;P0=c;delay(100);P0=0xff;
+		P20=1;P21=0;P22=1;P0=0xc6;delay(100);P0=0xff;
+	}
+}
