@@ -32,7 +32,7 @@ unsigned int GetHighTime()
 	 TR0 = 1;
 	while (IR_INPUT)
 	{
-			if (TH0 >= 0xc2)
+		if (TH0 >= 0xc2)
 		{
 			break;
 		}
@@ -51,7 +51,7 @@ unsigned int GetLowTime()
 	 {
 		 if (TH0 >= 0xc2)
 		 {
-				break;
+			break;
 		 }
 	 }
 	 TR0 = 0;
