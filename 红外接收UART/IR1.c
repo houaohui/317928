@@ -1,3 +1,5 @@
+//通过数码管显示用户码和键值码
+
 #include <STC12C5A60S2.H>
 sbit IR_INPUT = P3^2; 
 sbit ENLED = P1^1;
