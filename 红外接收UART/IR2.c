@@ -1,3 +1,4 @@
+//通过UART通信把所有数据发送到电脑显示
 #include <stc12c5a60s2.h>
 
 sbit IR_INPUT = P3^2;
@@ -112,10 +113,10 @@ void EXINT1_ISR() interrupt 0
 void main()
 {
 	unsigned char i;
-	TMOD |=0x20; //���ö�ʱ��1����ģʽ1��8λ�Զ���װ
-	TL1=TH1=0xf7; //������9600
-	SM1=1; //���ô��ڹ���ģʽ1��10λ�첽�շ�
-	TR1=1; //������ʱ��1
+	TMOD |=0x20; //设置定时器1工作模式1，8位自动重装
+	TL1=TH1=0xf7; //比特率9600
+	SM1=1; //设置串口工作模式1，10位异步收发
+	TR1=1; //启动定时器1
 	EA=1;
 	InitInfrared();
 	while(1)
