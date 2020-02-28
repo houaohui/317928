@@ -25,7 +25,8 @@ void main()
 			TL0=0Xab;
 			cnt++;
 			if(cnt>=50)
-			{	cnt=0;
+			{	
+				cnt=0;
 				sec--;
 				a=ledchar[sec%10];
 				b=ledchar[sec/10%10];
@@ -39,6 +40,7 @@ void main()
 			case 1 :P20=0;P21=0;P22=1;P0=b;delay(100);i++;break;
 			case 2 :P20=1;P21=1;P22=0;P0=c;delay(100);i=0;break;
 		}
-	}
-	
+	}	
 }
+
+
