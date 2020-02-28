@@ -1,3 +1,7 @@
+/*---------------------------------------------
+---按键即是钢琴键，来控制蜂鸣器发出不同频率-----
+---可以通过上下键调节频率----------------------
+---------------------------------------------*/
 #include <stc12c5a60s2.h>
 sbit buzz=P1^3;
 sbit enled=P1^1;
@@ -18,11 +22,11 @@ unsigned char keyscan()
 	P2=0x0f;
 	if((P2 & 0x0f)!= 0x0f)
 	{
-			cl= P2 & 0x0f;
-			P2=cl|0xf0;
-			ch=P2&0xf0;
-		  //while((P2&0xf0)!=0xf0);
-			return (cl + ch);
+		cl= P2 & 0x0f;
+		P2=cl|0xf0;
+		ch=P2&0xf0;
+		while((P2&0xf0)!=0xf0);
+		return (cl + ch);
 	}
 }
 
@@ -77,19 +81,19 @@ void main()
 				buzz=1;
 			}
 		}
-			a=ledchar[i%10];
-			b=ledchar[i/10%10];
-			c=ledchar[i/100%10];
-			d=ledchar[i/1000%10];
-			e=ledchar[i/10000%10];
+		a=ledchar[i%10];
+		b=ledchar[i/10%10];
+		c=ledchar[i/100%10];
+		d=ledchar[i/1000%10];
+		e=ledchar[i/10000%10];
 			
 		
-			P20=1;P21=0;P22=1;P0=a;delay(100);P0=0xff;//¹Ø±Õ¶ÎÑ¡ÏûÓ°×Ó
-			P20=0;P21=0;P22=1;P0=b;delay(100);P0=0xff;
-			P20=1;P21=1;P22=0;P0=c;delay(100);P0=0xff;
-			P20=0;P21=1;P22=0;P0=d;delay(100);P0=0xff;
-		  P20=1;P21=0;P22=0;P0=e;delay(100);P0=0xff;
-		  P20=1;P21=1;P22=1;
+		P20=1;P21=0;P22=1;P0=a;delay(100);P0=0xff;//¹Ø±Õ¶ÎÑ¡ÏûÓ°×Ó
+		P20=0;P21=0;P22=1;P0=b;delay(100);P0=0xff;
+		P20=1;P21=1;P22=0;P0=c;delay(100);P0=0xff;
+		P20=0;P21=1;P22=0;P0=d;delay(100);P0=0xff;
+		P20=1;P21=0;P22=0;P0=e;delay(100);P0=0xff;
+		P20=1;P21=1;P22=1;
 	}
 	
 }
