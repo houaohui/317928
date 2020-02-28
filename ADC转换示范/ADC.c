@@ -3,8 +3,8 @@
 
 sfr PLASF = 0x9d;
 
-#define ADC_POWER 0x80
-#define ADC_FLAG 0x10
+#define ADC_POWER 0x80//ADC开关控制位
+#define ADC_FLAG 0x10//ADC转换完成标志位
 #define ADC_START 0x08
 #define ADC_SPEEDLL 0x00
 unsigned char dat,a,b,c;
@@ -26,7 +26,7 @@ void ADC_init()
 	PLASF = 0x01;
 	ADC_RES = 0;
 	ADC_CONTR = ADC_POWER|ADC_SPEEDLL|ADC_START;
-	delay(2); //�ĸ�ʱ������
+	delay(2); //ËÄ¸öÊ±ÖÓÖÜÆÚ
 }
 
 void main()
