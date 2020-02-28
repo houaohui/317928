@@ -124,24 +124,24 @@ void EXINT1_ISR() interrupt 0
 		for(j=0; j<8; j++)
 		{
 			time = GetLowTime();
-			if((time<940) ||(time >2157))//时间判定超过340~780us误码，直接退出
+			if((time<940) ||(time >2157))             //时间判定超过340~780us误码，直接退出
 			{
 				IE0 = 0;
 				return;
 			}
 			time = GetHighTime();
-			if((time>940) && (time <2157))//时间在340~780us，则该bit值为0
+			if((time>940) && (time <2157))            //时间在340~780us，则该bit值为0
 			{
-				byt >>= 1;//低位在先，所以时间右移，高位置0
+				byt >>= 1;                        //低位在先，所以时间右移，高位置0
 			}
-			else if((time>4037) && (time<5253))//时间在1460~1900us，则该bit值为0
+			else if((time>4037) && (time<5253))       //时间在1460~1900us，则该bit值为0
 			{
 				byt >>= 1;
-				byt |= 0x80;//低位在先，所以时间右移，高位置1
+				byt |= 0x80;          //低位在先，所以时间右移，高位置1
 			}
 			else
 			{
-				IE0 = 0;//否则直接退出
+				IE0 = 0;              //否则直接退出
 				return;
 			}
 		}
