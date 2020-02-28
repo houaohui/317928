@@ -26,11 +26,11 @@ unsigned char keyscan()
 	P2=0x0f;
 	if((P2 & 0x0f)!= 0x0f)
 	{
-			cl= P2 & 0x0f;
-			P2=cl|0xf0;
-			ch=P2&0xf0;
-		  while((P2&0xf0)!=0xf0);
-			return (cl + ch);
+		cl= P2 & 0x0f;
+		P2=cl|0xf0;
+		ch=P2&0xf0;
+		while((P2&0xf0)!=0xf0);
+		return (cl + ch);
 	}
 	return(0);
 }
