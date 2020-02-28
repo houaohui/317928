@@ -6,25 +6,32 @@ typedef unsigned int uint;
 sbit RS=P2^0;
 sbit RW=P2^1;
 sbit EN=P1^2;
-
-void delay()//300ns
-{}
+/*--------------
+ç©ºå‡½æ•°ï¼Œä¸ºäº†å»¶æ—¶300ns
+---------------*/
+void delay()
+{
+}
+/*----------------
+è¯»å¿™
+---------------*/
 void read_busy()
 {
 	uchar busy;
 	P0=0xff;
 	RS=0;
 	RW=1;
-	while(0);
 	do
 	{
 		EN=1;
 		busy=P0;
 		delay();
 		EN=0;
-	}while(busy&0x80);
+	}while(busy&0x80);           //bit7==1è¡¨ç¤ºæ¶²æ™¶æ­£å¿™
 }
-
+/*------------------
+å‘1602å†™å‘½ä»¤å‡½æ•°
+-------------------*/
 void write_cmd(uchar cmd)
 {
 	read_busy();
@@ -37,7 +44,9 @@ void write_cmd(uchar cmd)
 	EN=0;
 	delay();
 }
-
+/*---------------------
+å‘1602å†™æ•°æ®å‡½æ•°
+----------------------*/
 void write_dat(uchar dat)
 {
 	read_busy();
@@ -55,14 +64,16 @@ void main()
 {
 	unsigned char a[]={"monday"};
 	unsigned char *pa;
-	write_cmd(0x38);//ÉèÖÃ1602ÏÔÊ¾
-	write_cmd(0x0f);//¿ªÏÔÊ¾£¬ÏÔÊ¾¹â±ê£¬¹â±êÉÁË¸
-	write_cmd(0x01);//ÇåÆÁ
-	write_cmd(0x06);//µØÖ·Ö¸ÕëÒÆÎ»ÃüÁî
-	write_cmd(0x80|0x00);//ÏÔÊ¾µØÖ·£¬´ÓµÚÁãÎ»¿ªÊ¼
+	write_cmd(0x38);                      //è®¾ç½®1602æ˜¾ç¤º
+	write_cmd(0x0f);                      //å¼€æ˜¾ç¤ºï¼Œæ˜¾ç¤ºå…‰æ ‡ï¼Œå…‰æ ‡é—ªçƒ
+	write_cmd(0x01);                      //æ¸…å±
+	write_cmd(0x06);                      //åœ°å€æŒ‡é’ˆç§»ä½å‘½ä»¤
+	write_cmd(0x80|0x00);                 //æ˜¾ç¤ºåœ°å€ï¼Œä»ç¬¬é›¶ä½å¼€å§‹
 	pa=a;
 	while(*pa!='\0')
-		write_dat(*pa++);
+	{
+		write_dat(*pa++);             //å…ˆå–æ•°æ®å†åœ°å€åŠ ä¸€
+	}
 	while(1);
 }
 
