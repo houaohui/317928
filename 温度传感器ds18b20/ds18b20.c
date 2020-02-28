@@ -3,30 +3,36 @@ sbit DS = P3^5; //1_wire
 sbit enled=P1^1;
 unsigned char code ledchar[]=
 {0xc0,0xf9,0xa4,0xb0,0x99,0x92,0x82,0xf8,0x80,0x90};
-//½øÈëº¯Êı0.98us,¼õÒ»´Î0.49us
+/*------------------------
+è¿›å…¥å‡½æ•°0.98us,å‡ä¸€æ¬¡0.49us
+------------------------*/
 void delay(unsigned int us)
 {
 	while(us--);
 }
 
-//³õÊ¼»¯³ÌĞò
+/*-----------------
+åˆå§‹åŒ–ç¨‹åº
+----------------*/
 bit ds_init()
 {
 	bit i;
 	DS=1;
 	delay(1);
 	DS=0;
-	delay(998);//ÑÓÊ±480usÒÔÉÏ£¬ds18b20½«±»¸´Î»
+	delay(998);//å»¶æ—¶480usä»¥ä¸Šï¼Œds18b20å°†è¢«å¤ä½
 	DS=1;
-	delay(59);//15~60us,µÈ´ı
+	delay(59);//15~60us,ç­‰å¾…
 	i=DS;
-	delay(300);//²ÉÑùÖ®ºóµÈ´ı60~240us
+	delay(300);//é‡‡æ ·ä¹‹åç­‰å¾…60~240us
 	DS=1;
 	delay(1);
 	return (i);
 }
 
-//Ğ´Ò»¸ö×Ö½Ú
+/*-----------------
+å†™ä¸€ä¸ªå­—èŠ‚
+-------------*/
 void write_byte(unsigned char dat)
 {
 	unsigned char i;
@@ -35,26 +41,28 @@ void write_byte(unsigned char dat)
 		DS=0;
 		delay(1);
 		DS=dat&0x01;
-		delay(150);//ÑÓÊ±60usÒÔÉÏ
-		DS=1; //ÊÍ·Å×ÜÏß×¼±¸ÏÂ´ÎÊı¾İĞ´Èë
-		delay(1);//1us
+		delay(150);           //å»¶æ—¶60usä»¥ä¸Š
+		DS=1;                 //é‡Šæ”¾æ€»çº¿å‡†å¤‡ä¸‹æ¬¡æ•°æ®å†™å…¥
+		delay(1);             //1us
 		dat >>= 1;
 	}
 }
-//¶ÁÒ»¸ö×Ö½Ú
+/*------------------------
+è¯»ä¸€ä¸ªå­—èŠ‚
+----------------*/
 unsigned char read_byte()
 {
 	unsigned char i,j,dat;
 	for(i=0;i<8;i++)
 	{
-		DS=0;//²úÉú¶ÁÊ±Ğò
-		delay(1);//1us
-		DS=1;//ÊÍ·ÅÖĞÏß²ÉÑù
-		delay(1);//1us
+		DS=0;                 //äº§ç”Ÿè¯»æ—¶åº
+		delay(1);             //1us
+		DS=1;                 //é‡Šæ”¾ä¸­çº¿é‡‡æ ·
+		delay(1);             //1us
 		j=DS;
-		delay(150);//60usÒÔÉÏ
+		delay(150);           //60usä»¥ä¸Š
 		DS=1;
-		delay(1);//1us
+		delay(1);             //1us
 		dat=(j<<7)|(dat>>1);
 	}
 	return(dat);
@@ -66,31 +74,31 @@ void main()
 	unsigned char L,M,a,b,c;
 	enled=0;
 	ds_init();
-	write_byte(0xcc);//·¢ËÍÌøÔ½ROMÖ¸Áî
-	write_byte(0x4e);//Ğ´Ôİ´æÆ÷Ö¸Áî
-	write_byte(0x7f);//±¨¾¯ÉÏÏŞÖµ
-	write_byte(0x00);//±¨¾¯ÏÂÏŞÖµ
-	write_byte(0x7f);//ÅäÖÃ¹¤×÷ÔÚ12Î»Ä£Ê½ÏÂ
+	write_byte(0xcc);                //å‘é€è·³è¶ŠROMæŒ‡ä»¤
+	write_byte(0x4e);                //å†™æš‚å­˜å™¨æŒ‡ä»¤
+	write_byte(0x7f);                //æŠ¥è­¦ä¸Šé™å€¼
+	write_byte(0x00);                //æŠ¥è­¦ä¸‹é™å€¼
+	write_byte(0x7f);                //é…ç½®å·¥ä½œåœ¨12ä½æ¨¡å¼ä¸‹
 	ds_init();
-	write_byte(0xcc);//·¢ËÍÌøÔ½ROMÖ¸Áî
-	write_byte(0x48);//·¢ËÍ¿¼ÅàÖ¸Áî£¬ÏÂ´ÎÉÏµçºóDS18B20»á°´´ËÅäÖÃ¹¤×÷£¬ÒÔºó²»ÓÃÅäÖÃ
+	write_byte(0xcc);                //å‘é€è·³è¶ŠROMæŒ‡ä»¤
+	write_byte(0x48);                //å‘é€è€ƒåŸ¹æŒ‡ä»¤ï¼Œä¸‹æ¬¡ä¸Šç”µåDS18B20ä¼šæŒ‰æ­¤é…ç½®å·¥ä½œï¼Œä»¥åä¸ç”¨é…ç½®
 	while(1)
 	{
 		ds_init();
-		write_byte(0xcc);//·¢ËÍÌøÔ½ROMÖ¸Áî
-		write_byte(0x44);//·¢ËÍÎÂ¶È×ª»»Ö¸Áî
+		write_byte(0xcc);          //å‘é€è·³è¶ŠROMæŒ‡ä»¤
+		write_byte(0x44);          //å‘é€æ¸©åº¦è½¬æ¢æŒ‡ä»¤
 		delay(1528);
 		ds_init();
-		write_byte(0xcc);//·¢ËÍÌøÔ½ROMÖ¸Áî
-		write_byte(0xbe);//¶ÁÈ¡ds18b20Ôİ´æÖµ
+		write_byte(0xcc);          //å‘é€è·³è¶ŠROMæŒ‡ä»¤
+		write_byte(0xbe);          //è¯»å–ds18b20æš‚å­˜å€¼
 		L=read_byte();
 		M=read_byte();
 		i=M;
 		i<<=8;
 		i|=L;
-		if(M>=0x08) //ÅĞ¶ÏÊÇ·ñÎªÕıÊı
+		if(M>=0x08)                //åˆ¤æ–­æ˜¯å¦ä¸ºæ­£æ•°
 		{
-			i=~i+1; //»¹Ô­¸ºÊıÈ¡·´¼ÓÒ»
+			i=~i+1;            //è¿˜åŸè´Ÿæ•°å–ååŠ ä¸€
 		}
 		i=i*0.0625*10+0.5;
 		a=ledchar[i%10];
