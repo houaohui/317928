@@ -20,11 +20,11 @@ bit ds_init()
 	DS=1;
 	delay(1);
 	DS=0;
-	delay(998);//延时480us以上，ds18b20将被复位
+	delay(998);             //延时480us以上，ds18b20将被复位
 	DS=1;
-	delay(59);//15~60us,等待
+	delay(59);              //15~60us,等待
 	i=DS;
-	delay(300);//采样之后等待60~240us
+	delay(300);             //采样之后等待60~240us
 	DS=1;
 	delay(1);
 	return (i);
