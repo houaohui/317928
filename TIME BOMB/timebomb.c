@@ -1,3 +1,7 @@
+/*--------------------------------------------
+-----------小项目-----------------------------
+---可设置定时时间，时间为零，蜂鸣器打开--------
+--------------------------------------------*/
 #include <stc12c5a60s2.h>
 #define uchar unsigned char
 #define uint unsigned int
@@ -34,43 +38,19 @@ unsigned char keyscan()
 
 void scan(uchar k)
 {
-			if(s==1)
-			{
-				z=k;
-			}
-			if(s==2)
-			{
-			  y=k;
-			}
-			if(s==3)
-			{
-				x=k;
-			}
+	if(s==1)
+	{
+		z=k;
+	}
+	if(s==2)
+	{
+		y=k;
+	}
+	if(s==3)
+	{
+		x=k;
+	}
 }
-//void swit()
-//{
-//	static cn=0;
-//	bit en=0;
-//	if(TF1==1)
-//		{
-//			TF1=0;
-//			TH1=0X00;
-//			TL1=0X00;
-//			cn++;
-//			if(cn>=10)
-//			{
-//				en=~en;
-//				cn=0;
-//				if(en)
-//				{
-//				a=0xff;
-//				}
-//				else a=ledchar[z];
-//			}
-//		}
-//}
-
-
 
 void main()
 {
@@ -93,28 +73,28 @@ void main()
 			case 0xde:scan(7);s=0;break;  
 			case 0xdd:scan(8);s=0;break; 
 			case 0xdb:scan(9);s=0;break;		                           //9
-			case 0x77:z++;break;                  //up
-			case 0xd7:z--;break;                  //down
-			case 0xb7:s++;if(s>=4)s=1;break; 			//left
-			case 0xe7:s--;if(s<=0)s=3;break;			//right
-			case 0xed:ET0=0;en=1;s=0;ET1=0;TR1=0;break;    //ESC
-			case 0xeb:en=0;ET0=1;TR0=1;break;              //ENTER
+			case 0x77:z++;break;                                               //up
+			case 0xd7:z--;break;                                               //down
+			case 0xb7:s++;if(s>=4)s=1;break; 			           //left
+			case 0xe7:s--;if(s<=0)s=3;break;			           //right
+			case 0xed:ET0=0;en=1;s=0;ET1=0;TR1=0;break;                        //ESC
+			case 0xeb:en=0;ET0=1;TR0=1;break;                                  //ENTER
 		}
 		if(en)
 		{
 			if(s==1)
 			{
-			a=0xff;
+				a=0xff;
 			}
 			else a=ledchar[z];
 			if(s==2)
 			{
-			b=0xff;
+				b=0xff;
 			}
 			else b=ledchar[y];
 			if(s==3)
 			{
-			c=0xff;
+				c=0xff;
 			}
 			else c=ledchar[x];
 			sec=x*100+y*10+z;
@@ -163,7 +143,7 @@ void interruptT1() interrupt 1
 	b=ledchar[y];
 	c=ledchar[x];
 	
-  P20=1;P21=0;P22=1;P0=a;delay(10);P0=0xff;
+ 	P20=1;P21=0;P22=1;P0=a;delay(10);P0=0xff;
 	P20=0;P21=0;P22=1;P0=b;delay(10);P0=0xff;
 	P20=1;P21=1;P22=0;P0=c;delay(10);P0=0xff;
 	P20=1;P21=1;P22=1;
