@@ -28,7 +28,7 @@ void I2C_init()
 	while(0);
 }
 
-void I2C_START() //起始信号
+void I2C_START() //脝冒脢录脨脜潞脜
 {
 	SCL=1;
 	while(0);
@@ -48,7 +48,7 @@ void I2C_STOP()
 	delay_5us();
 }
 
-void master_ACK(bit i) //主机发送应答
+void master_ACK(bit i) //脰梅禄煤路垄脣脥脫娄麓冒
 {
 	SCL=1;
 	while(0);
